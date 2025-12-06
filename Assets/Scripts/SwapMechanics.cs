@@ -87,15 +87,34 @@ public class SwapMechanics : MonoBehaviour
         
         (selectedTile.TileX, neighbor.TileX) = (neighbor.TileX, selectedTile.TileX);
         (selectedTile.TileY, neighbor.TileY) = (neighbor.TileY, selectedTile.TileY);
-
+        
+        
         _animations.PlaySwapAnimation(selectedTile.TileSpriteRenderer, neighbor.TileSpriteRenderer, () =>
         {
             // ПОСЛЕ АНИМАЦИИ: МЕНЯЕМ МИРОВЫЕ ПОЗИЦИИ ТАЙЛОВ (КОЛЛАЙДЕРЫ ПЕРЕЕЗЖАЮТ)
             (selectedTile.transform.position, neighbor.transform.position) =
                 (neighbor.transform.position, selectedTile.transform.position);
+            if (HasMatchesAfterSwap(selectedTile, neighbor))
+            {
+                
+                Debug.Log("Есть");
+            }
+            else
+            {
+                _animations.PlaySwapAnimation(selectedTile.TileSpriteRenderer, neighbor.TileSpriteRenderer, () =>
+                {
+                    (_boardGenerator.Tiles[selectedTile.TileX, selectedTile.TileY],
+                            _boardGenerator.Tiles[neighbor.TileX, neighbor.TileY])
+                        = (_boardGenerator.Tiles[neighbor.TileX, neighbor.TileY],
+                            _boardGenerator.Tiles[selectedTile.TileX, selectedTile.TileY]);
 
-            // Локальные позиции спрайтов уже сброшены в анимации
-            // Здесь можно запускать проверку матчей, откат, и т.д.
+                    (selectedTile.TileX, neighbor.TileX) = (neighbor.TileX, selectedTile.TileX);
+                    (selectedTile.TileY, neighbor.TileY) = (neighbor.TileY, selectedTile.TileY);
+
+                    (selectedTile.transform.position, neighbor.transform.position) =
+                        (neighbor.transform.position, selectedTile.transform.position);
+                });
+            }
         });
     }
 
@@ -104,4 +123,61 @@ public class SwapMechanics : MonoBehaviour
         return neighborX >= 0 && neighborX < _boardGenerator.Width &&
                neighborY >= 0 && neighborY < _boardGenerator.Height;
     }
+    
+    public bool HasMatchesAfterSwap(Tile firstTile, Tile secondTile)
+    {
+        return HasMatchesAt(firstTile) || HasMatchesAt(secondTile);
+    }
+
+    private bool HasMatchesAt(Tile tile)
+    {
+        // Проверка по горизонтали
+        int count = 1;
+
+        // Влево
+        for (int x = tile.TileX - 1; x >= 0; x--)
+        {
+            if (_boardGenerator.Tiles[x, tile.TileY].TileSpriteRenderer.sprite ==
+                _boardGenerator.Tiles[x + 1, tile.TileY].TileSpriteRenderer.sprite)
+                count++;
+            else break;
+        }
+
+        // Вправо
+        for (int x = tile.TileX + 1; x < _boardGenerator.Width; x++)
+        {
+            if (_boardGenerator.Tiles[x, tile.TileY].TileSpriteRenderer.sprite ==
+                _boardGenerator.Tiles[x - 1, tile.TileY].TileSpriteRenderer.sprite)
+                count++;
+            else break;
+        }
+
+        if (count >= 3) return true;
+
+        // Проверка по вертикали
+        count = 1;
+
+        // Вниз
+        for (int y = tile.TileY - 1; y >= 0; y--)
+        {
+            if (_boardGenerator.Tiles[tile.TileX, y].TileSpriteRenderer.sprite ==
+                _boardGenerator.Tiles[tile.TileX, y + 1].TileSpriteRenderer.sprite)
+                count++;
+            else break;
+        }
+
+        // Вверх
+        for (int y = tile.TileY + 1; y < _boardGenerator.Height; y++)
+        {
+            if (_boardGenerator.Tiles[tile.TileX, y].TileSpriteRenderer.sprite ==
+                _boardGenerator.Tiles[tile.TileX, y - 1].TileSpriteRenderer.sprite)
+                count++;
+            else break;
+        }
+
+        if (count >= 3) return true;
+
+        return false;
+    }
+
 }
