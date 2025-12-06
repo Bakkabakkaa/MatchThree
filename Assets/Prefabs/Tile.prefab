@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2380610921955377716}
   - component: {fileID: 3171459586694243154}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Candy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -95,7 +95,8 @@ GameObject:
   - component: {fileID: 8176344540717022162}
   - component: {fileID: 8176344540717022165}
   - component: {fileID: 8401705577790194893}
-  m_Layer: 0
+  - component: {fileID: 6505649742796481163}
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -183,3 +184,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TileSpriteRenderer: {fileID: 3171459586694243154}
+--- !u!61 &6505649742796481163
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8176344540717022164}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.00010043383, y: 0.0140301585}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 8.62, y: 3.36}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 1
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1.0613025, y: 1.0153228}
+  m_EdgeRadius: 0

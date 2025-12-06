@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class BoardGenerator : MonoBehaviour
 {
@@ -7,32 +8,33 @@ public class BoardGenerator : MonoBehaviour
     [SerializeField] private Transform _boardParent;
     [SerializeField] private SpriteProvider _spriteProvider;
 
+    public Tile[,] Tiles { get; set; }
+    public int Width { get; private set; } = 7;
+    public int Height { get; private set; } = 7;
+
     private Animations _animations;
-        
-    private int _width = 7;
-    private int _height = 7;
+
     private float _spacing = 1.1f;
-    private Tile[,] _tiles;
 
     private void Awake()
     {
         _animations = GetComponent<Animations>();
-        _tiles = new Tile[_width, _height];
+        Tiles = new Tile[Width, Height];
     }
 
     public void GenerateTilesBoard()
     {
-        var offsetX = (_width - 1) / 2f;
-        var offsetY = (_height - 1) / 2f;
+        var offsetX = (Width - 1) / 2f;
+        var offsetY = (Height - 1) / 2f;
         
-        for (int x = 0; x < _width; x++)
+        for (int x = 0; x < Width; x++)
         {
-            for (int y = 0; y < _height; y++)
+            for (int y = 0; y < Height; y++)
             {
                 var tile = Instantiate(_tilePrefab, _boardParent);
-                _tiles[x, y] = tile.gameObject.GetComponent<Tile>();
-                Sprite sprite = _spriteProvider.GetRandomSprite(_tiles, x, y);
-                _tiles[x, y].Init(sprite);
+                Tiles[x, y] = tile.gameObject.GetComponent<Tile>();
+                Sprite sprite = _spriteProvider.GetRandomSprite(Tiles, x, y);
+                Tiles[x, y].Init(sprite, x, y);
                 _animations.PlaySpawnAnimation(tile.GetComponent<Tile>().TileSpriteRenderer);
 
                 tile.localPosition = new Vector3(
