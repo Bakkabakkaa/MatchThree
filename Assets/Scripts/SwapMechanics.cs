@@ -11,6 +11,8 @@ public class SwapMechanics : MonoBehaviour
 
     private BoardGenerator _boardGenerator;
     private Animations _animations;
+    private MatchFinder _matchFinder;
+    private MatchHandler _matchHandler;
 
     private void Awake()
     {
@@ -18,6 +20,8 @@ public class SwapMechanics : MonoBehaviour
         
         _boardGenerator = GetComponent<BoardGenerator>();
         _animations = GetComponent<Animations>();
+        _matchFinder = GetComponent<MatchFinder>();
+        _matchHandler = GetComponent<MatchHandler>();
     }
 
     private void Update()
@@ -94,9 +98,9 @@ public class SwapMechanics : MonoBehaviour
             // ПОСЛЕ АНИМАЦИИ: МЕНЯЕМ МИРОВЫЕ ПОЗИЦИИ ТАЙЛОВ (КОЛЛАЙДЕРЫ ПЕРЕЕЗЖАЮТ)
             (selectedTile.transform.position, neighbor.transform.position) =
                 (neighbor.transform.position, selectedTile.transform.position);
-            if (HasMatchesAfterSwap(selectedTile, neighbor))
+            if (_matchFinder.HasMatchesAfterSwap(selectedTile, neighbor))
             {
-                
+                _matchHandler.DestroyMatches();
                 Debug.Log("Есть");
             }
             else
@@ -123,61 +127,4 @@ public class SwapMechanics : MonoBehaviour
         return neighborX >= 0 && neighborX < _boardGenerator.Width &&
                neighborY >= 0 && neighborY < _boardGenerator.Height;
     }
-    
-    public bool HasMatchesAfterSwap(Tile firstTile, Tile secondTile)
-    {
-        return HasMatchesAt(firstTile) || HasMatchesAt(secondTile);
-    }
-
-    private bool HasMatchesAt(Tile tile)
-    {
-        // Проверка по горизонтали
-        int count = 1;
-
-        // Влево
-        for (int x = tile.TileX - 1; x >= 0; x--)
-        {
-            if (_boardGenerator.Tiles[x, tile.TileY].TileSpriteRenderer.sprite ==
-                _boardGenerator.Tiles[x + 1, tile.TileY].TileSpriteRenderer.sprite)
-                count++;
-            else break;
-        }
-
-        // Вправо
-        for (int x = tile.TileX + 1; x < _boardGenerator.Width; x++)
-        {
-            if (_boardGenerator.Tiles[x, tile.TileY].TileSpriteRenderer.sprite ==
-                _boardGenerator.Tiles[x - 1, tile.TileY].TileSpriteRenderer.sprite)
-                count++;
-            else break;
-        }
-
-        if (count >= 3) return true;
-
-        // Проверка по вертикали
-        count = 1;
-
-        // Вниз
-        for (int y = tile.TileY - 1; y >= 0; y--)
-        {
-            if (_boardGenerator.Tiles[tile.TileX, y].TileSpriteRenderer.sprite ==
-                _boardGenerator.Tiles[tile.TileX, y + 1].TileSpriteRenderer.sprite)
-                count++;
-            else break;
-        }
-
-        // Вверх
-        for (int y = tile.TileY + 1; y < _boardGenerator.Height; y++)
-        {
-            if (_boardGenerator.Tiles[tile.TileX, y].TileSpriteRenderer.sprite ==
-                _boardGenerator.Tiles[tile.TileX, y - 1].TileSpriteRenderer.sprite)
-                count++;
-            else break;
-        }
-
-        if (count >= 3) return true;
-
-        return false;
-    }
-
 }

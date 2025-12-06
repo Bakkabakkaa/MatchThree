@@ -38,4 +38,9 @@ public class Animations : MonoBehaviour
             onComplete?.Invoke();
         });
     }
+
+    public void PlayDisappearance(Tile tile)
+    {
+        tile.TileSpriteRenderer.transform.DOScale(Vector3.zero, 0.3f).SetEase(Ease.InBack);
+    }
 }
